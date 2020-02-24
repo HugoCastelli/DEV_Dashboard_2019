@@ -1,0 +1,17 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple" name="{{this.widget.id}}">
+    <p style="font-size: 20px; color: white">Loading Trello widget</p>
+</ngx-spinner>
+<div *ngIf="this.newWidget != undefined" style="width: 100%; height: 100%; background: #eeeeee;">
+    <div style="background: #335d81;padding: 10px;color: white;">
+        {{this.newWidget.board_name}} - {{this.newWidget.name}}
+    </div>
+    <div style="width: 100%; height: 93%; background: #0079bf; padding: 20px; overflow-x: auto">
+        <div *ngFor="let each of this.newWidget.list" class="card"
+             style="width: 100%;padding: 10px;background: #f6f6f6;margin-top: 15px;border-radius: 5px;">
+            <h6 style="white-space: normal">
+                <p style="font-size: 17px; color: #808080; margin-bottom: 0">{{each.name}}</p>
+                <span *ngIf="each.talgs == 'none' || each.tags != 'sky'" [ngStyle]="{'background-color': each.tags, 'color': each.tags}" class="badge badge-pill" style="color: #f6f6f6; margin-top: 10px;padding-right: 30px; padding-bottom: 0; padding-top: 0">s</span>
+            </h6>
+        </div>
+    </div>
+</div>

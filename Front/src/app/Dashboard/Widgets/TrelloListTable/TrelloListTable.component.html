@@ -1,0 +1,29 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple" name="{{this.widget.id}}">
+    <p style="font-size: 20px; color: white">Loading Trello widget</p>
+</ngx-spinner>
+<div *ngIf="this.newWidget != undefined" style="width: 100%; height: 100%; background: #eeeeee;">
+    <div style="background: #335d81;padding: 10px;color: white;">
+        {{this.newWidget.board_name}}
+    </div>
+    <div style="width: 100%; height: 100%; background: #0079bf; padding: 20px; overflow-x: auto">
+        <div class="scrolling-wrapper" style="height: 600px; margin-bottom: 25px">
+            <div id="trelloKaban" *ngFor="let each of this.newWidget.lists; let i = index" [attr.data-index]="i" class="card"
+                 style="margin-bottom: 50px; margin-right: 20px; width: 350px; padding:25px; background-color: white; box-shadow: 0px 0px 0px 0px rgba(0,0,0,0); border: 0; position: absolute;">
+                <h6 class="card-header with-elements"
+                    style="padding-top: 10px; padding-bottom: 10px; border: none; background-color: #d1cfcf; box-shadow: 0px 0px 36px -5px rgba(235,235,235,1);">
+                    <div style="margin-left: 5px; font-size: 17px; color: white">{{each.list_name}}</div>
+                </h6>
+
+                <div *ngFor="let each1 of each.cards" class="card"
+                     style="width: 300px;padding: 10px;background: #e6e6e65c;margin-top: 15px;border-radius: 5px;">
+                    <h6 style="white-space: normal">
+                        <p style="font-size: 17px; color: #808080; margin-bottom: 0">{{each1.card_name}}</p>
+                        <span *ngIf="each1.tags == 'none' || each1.tags != 'sky'" [ngStyle]="{'background-color': each1.tags, 'color': each1.tags}" class="badge badge-pill" style="color: #f6f6f6; margin-top: 10px;padding-right: 30px; padding-bottom: 0; padding-top: 0">s</span>
+                    </h6>
+                </div>
+
+                <br>
+            </div>
+        </div>
+    </div>
+</div>

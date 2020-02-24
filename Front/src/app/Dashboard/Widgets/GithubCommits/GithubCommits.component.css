@@ -1,0 +1,8 @@
+mat-sidenav-content > gridster {
+  background: white !important;
+}
+
+mat-sidenav-content > gridster > gridster-item {
+  background: #b1bac3;
+}
+

@@ -1,0 +1,19 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple" name="{{this.widget.id}}">
+    <p style="font-size: 15px; color: white; text-align: center; margin-top: 100px">Loading Cryptocurrency widget</p>
+</ngx-spinner>
+<div *ngIf="this.newWidget != undefined" class="grid-container-crypto" style="width: 100%; height: 100%; background: #eeeeee">
+    <div class="grid-item borderCustom" style="text-align: center; font-size: 20px; color: #2d3065; font-weight: 500">
+        <img style="width: 40%; margin-top: 35px" [src]="'assets/CryptoGif/' + this.newWidget.cryptocurrency +'.gif'" alt/><br>
+        {{this.newWidget == undefined ? '???' : this.newWidget.name}}
+    </div>
+    <div *ngIf="this.newWidget != undefined" class="grid-item" style="text-align:center; padding: 10px; color: #2d3065">
+        <div>
+            <div style="font-size: 20px; margin-top: 30px">
+                Capitalization
+            </div>
+            <div style="font-size: 35px; font-weight: bold">
+                <abbr *ngIf="this.newWidget.currency == 'EUR'" style="vertical-align: super; font-size: 20px">€</abbr><abbr *ngIf="this.newWidget.currency == 'USD'" style="vertical-align: super; font-size: 20px">$</abbr> {{this.newWidget == undefined ? '???' : this.newWidget.worth}}
+            </div>
+        </div>
+    </div>
+</div>

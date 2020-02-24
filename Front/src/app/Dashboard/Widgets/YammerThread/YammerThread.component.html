@@ -1,0 +1,46 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple" name="{{this.widget.id}}">
+    <p style="font-size: 20px; color: white">Loading Yammer widget</p>
+</ngx-spinner>
+<div *ngIf="this.newWidget != undefined" style="width: 100%; height: 100%; background: #eeeeee;">
+    <div class="scrollbar style-4" style="height: 100%; padding-bottom: 10px">
+        <div style="padding: 15px">
+            <div style="width: 100%; border-radius: 20px; background: white; flex-wrap: wrap">
+                <div style="width: 100%">
+                    <img style="width: 60px; border-radius: 30px; margin-top: 10px; margin-left: 10px" src="{{this.newWidget.msg.image}}" alt/>
+                    <abbr
+                        style="vertical-align: -webkit-baseline-middle; margin-left: 10px; font-size: 20px; color: #858f9b;">{{this.newWidget.msg.sender_name[0]}}</abbr>
+                    <a href="{{this.newWidget.msg.url}}" target="_blank"><span class="badge badge-pill" style="text-align: right; float: right; color: white; background: #336d97; font-weight: 500; padding-top: 5px; padding-bottom: 5px; padding-left: 20px; margin-right: 17px; margin-top: 25px; padding-right: 20px; cursor:pointer;">See on Yammer</span></a>
+                </div>
+
+                <div style="padding: 20px; word-wrap: break-word; font-weight: 500; padding-top: 30px; padding-bottom: 0">
+                    {{this.newWidget.msg.title}}
+                </div>
+                <div [innerHTML]="this.newWidget.msg.message" style="padding: 20px; word-wrap: break-word; padding-top: 10px">
+                </div>
+                <div style="padding: 20px; padding-top: 0">
+                    <i style="margin-right: 5px" class="far fa-thumbs-up"></i>{{this.newWidget.msg.likes}}
+                </div>
+
+                <div *ngFor="let each of newWidget.comments" style="padding: 15px">
+                    <div style="width: 100%; border-radius: 20px; background: #edeff2; flex-wrap: wrap">
+                        <div style="width: 100%">
+                            <img style="width: 60px; border-radius: 30px; margin-top: 10px; margin-left: 10px"
+                                 src="{{each.image}}" alt/>
+                            <abbr
+                                style="vertical-align: -webkit-baseline-middle; margin-left: 10px; font-size: 20px; color: #858f9b;">{{each.sender_name[0]}}</abbr>
+                        </div>
+
+                        <div style="padding: 20px; word-wrap: break-word; font-weight: 500; padding-top: 30px; padding-bottom: 0">
+                            {{each.title}}
+                        </div>
+                        <div [innerHTML]="each.message" style="padding: 20px; word-wrap: break-word; padding-top: 10px">
+                        </div>
+                        <div style="padding: 20px; padding-top: 0">
+                            <i style="margin-right: 5px" class="far fa-thumbs-up"></i>{{each.likes}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

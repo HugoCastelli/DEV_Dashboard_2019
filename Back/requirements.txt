@@ -1,0 +1,6 @@
+flask
+pyrebase
+flask_cors
+pyopenssl
+Babel
+Money

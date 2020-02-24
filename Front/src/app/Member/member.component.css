@@ -1,0 +1,18 @@
+table {
+  border-collapse: collapse;
+}
+
+.gfg {
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
+thead th {
+  color: #8b979f;
+  font-weight: 500;
+}
+
+tbody tr {
+  background: white;
+}
+

@@ -1,0 +1,35 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple" name="{{this.widget.id}}">
+    <p style="font-size: 20px; color: white">Loading Github widget</p>
+</ngx-spinner>
+<div *ngIf="this.newWidget != undefined" style="width: 100%; height: 100%; background: #eeeeee;">
+    <div style="background: black;padding: 10px;color: white;">
+        {{this.newWidget.name}}
+    </div>
+    <div style="padding: 15px; height: 100%; padding-bottom: 80px" class="scrollbar style-4">
+        <div id="vertical-timeline" class="vertical-container dark-timeline">
+            <div *ngFor="let each of newWidget.commits" class="vertical-timeline-block">
+                <div class="vertical-timeline-icon" style="background: white">
+                    <i class="fa fa-sync-alt"></i>
+                </div>
+
+                <div class="vertical-timeline-content">
+                    <div style="width: 100%">
+                        <a href="{{each.author_url}}" target="_blank"><img
+                            style="width: 40px; border-radius: 30px; margin-top: 10px; margin-left: 10px"
+                            src="{{each.author_img}}" alt/>
+                        <abbr
+                            style="vertical-align: -webkit-baseline-middle; margin-left: 10px; font-size: 15px; color: #858f9b;">{{each.author}}</abbr></a>
+                        <a href="{{each.commit_url}}" target="_blank"><span class="badge badge-pill"
+                                                                            style="text-align: right; float: right; color: white; background: black; font-weight: 500; padding-top: 5px; padding-bottom: 5px; padding-left: 20px; margin-right: 17px; margin-top: 18px; padding-right: 20px; cursor:pointer;">See on Github</span></a>
+                    </div>
+                    <div style="margin-top: 20px; padding: 10px;margin-bottom: 20px;">
+                        {{each.message}}
+                    </div>
+                    <span style="margin-left: 7px" class="vertical-date">
+                    <small>{{each.date}}</small>
+                </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

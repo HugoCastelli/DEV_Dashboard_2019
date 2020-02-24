@@ -1,0 +1,1148 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport
+                 [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+                 [mode]="(isHandset$ | async) ? 'over' : 'side'"
+                 [opened]="(isHandset$ | async) === false">
+        <mat-toolbar style="height: 290px; padding-top: 20px">
+            <div style="width: 100%; text-align: center;">
+                <img src="assets/img/avatar.png" alt style="height: 100px; width: 100px; margin: auto;"
+                     class="rounded-circle shadow-lg">
+
+                <p class="text-center" style="color: #858f9b; margin-bottom: 0; margin-top: 20px">{{this.data.name}}</p>
+
+                <span class="badge badge-pill"
+                      style="color: white;background: #FF4B2B;font-weight: 500;padding-top: 5px;padding-bottom: 5px;padding-left: 20px;margin-top: 10px;padding-right: 20px;">{{this.data.role}}</span>
+
+            </div>
+        </mat-toolbar>
+        <mat-divider style="width: 150px; margin: auto;"></mat-divider>
+        <mat-nav-list style="position: relative">
+            <a style="height: 100px" mat-list-item>
+                <div style="width: 100%; text-align: center; color: #FF4B2B">
+                    <i style="font-size: 20px" class="fas fa-home"></i>
+                    <p style="margin-bottom: 0">Dashboard</p>
+                </div>
+            </a>
+            <a style="height: 100px" routerLink="/services" mat-list-item>
+                <div style="width: 100%; text-align: center;">
+                    <i style="color: #b1bac3; font-size: 20px" class="fas fa-cog"></i>
+                    <p style="color: #b1bac3; margin-bottom: 0">Services</p>
+                </div>
+            </a>
+            <a *ngIf="this.data.role == 'King Admin'" routerLink="/member" style="height: 100px" mat-list-item>
+                <div style="width: 100%; text-align: center;">
+                    <i style="color: #b1bac3; font-size: 20px" class="fas fa-users-cog"></i>
+                    <p style="color: #b1bac3; margin-bottom: 0">Members</p>
+                </div>
+            </a>
+
+            <a style="height: 100px" (click)="logout()" mat-list-item>
+                <div style="width: 100%; text-align: center;">
+                    <i style="color: #b1bac3; font-size: 20px" class="fas fa-sign-out-alt"></i>
+                    <p style="color: #b1bac3; margin-bottom: 0">Log Out</p>
+                </div>
+            </a>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <mat-toolbar style="background: white; height: 120px">
+            <button
+                type="button"
+                aria-label="Toggle sidenav"
+                mat-icon-button
+                (click)="drawer.toggle()"
+                *ngIf="isHandset$ | async">
+                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+            <div>
+                <div style="width: 100%">
+                    <span style="color: #FF4B2B; font-size: 30px">Dashboard</span>
+                </div>
+                <div style="width: 100%">
+                    <span style="color: #b1bac3">{{myDate | amDateFormat:'LL'}}</span>
+                </div>
+            </div>
+            <div style="text-align: right; width: 100%">
+                <button mat-mini-fab style="background: #FF4B2B" class="cols-2" (click)="editWidgets()">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-mini-fab style="background: #FF4B2B; margin-left: 15px" class="cols-2" (click)="addWidget()">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </mat-toolbar>
+        <gridster style="margin-bottom: 20px;" [options]="this.options">
+            <gridster-item class="shadow" style="border-radius: 10px" [item]="item" *ngFor="let item of dashboard">
+                <div [ngClass]="{'displayNone': this.canEdit == false}" class="widgetEditable">
+                    <div
+                        style="text-align: center; position: absolute; top: 50%;left: 0;right: 0;transform: translateY(-50%);">
+                        <button mat-mini-fab style="background: #FF4B2B" class="cols-2"
+                                (click)="openSettings(item)">
+                            <mat-icon>settings</mat-icon>
+                        </button>
+                        <button style="margin-left: 20px; background: #FF4B2B" mat-mini-fab class="cols-2"
+                                (click)="removeItem($event, item)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <app-parent-dynamic [widget]="item" [resizeEvent]="resizeEvent"></app-parent-dynamic>
+            </gridster-item>
+        </gridster>
+    </mat-sidenav-content>
+</mat-sidenav-container>
+
+<!-- ADD WIDGET -->
+<ng-template #modalAdd let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">New widget</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" style="background: #ebebeb">
+        <div id="weather" (click)="clickWeather()" class="grid-container-widget shadow chooseWidget">
+            <div class="grid-item">
+                <img style="width: 100%" src="assets/WidgetWeather/01d.svg"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget weather
+                    </div>
+                    <div style="color: black;">
+                        This is all weather widgets.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="github" (click)="clickGithub()" class="grid-container-widget shadow chooseWidget">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 70%; margin-top: 10px" src="https://www.pofilo.fr/img/SPOF-github/github1600.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget Github
+                    </div>
+                    <div style="color: black;">
+                        This is all github widgets.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="yammer" (click)="clickYammer()" class="grid-container-widget shadow chooseWidget">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 70%; margin-top: 10px"
+                     src="https://is2-ssl.mzstatic.com/image/thumb/Purple128/v4/c6/80/63/c68063f3-aaa9-209c-8caf-31493db7a86b/contsched.okkimutv.png/1200x630bb.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget Yammer
+                    </div>
+                    <div style="color: black;">
+                        This is all Yammer widgets.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="epitech" (click)="clickIntra()" class="grid-container-widget shadow chooseWidget">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://gitlab.clementdugal.fr/uploads/-/system/project/avatar/91/epitech.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget Intra Epitech
+                    </div>
+                    <div style="color: black;">
+                        This is all Epitech's Intranet widgets.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="crypto" (click)="clickCrypto()" class="grid-container-widget shadow chooseWidget">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1024px-Bitcoin.svg.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget Cryptocurrency
+                    </div>
+                    <div style="color: black;">
+                        This is all cryptocurrencies widgets.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="trello" (click)="clickTrello()" class="grid-container-widget shadow chooseWidget">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://www.stickpng.com/assets/images/58482beecef1014c0b5e4a36.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget Trello
+                    </div>
+                    <div style="color: black;">
+                        This is all Trello widgets.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="air" (click)="clickAir()" class="grid-container-widget shadow chooseWidget">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://images.vexels.com/media/users/3/157970/isolated/preview/c156b4270aea292b9b335dd463ea17eb-earth-planet-icon-earth-icon-by-vexels.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget Air Quality
+                    </div>
+                    <div style="color: black;">
+                        This is all air quality widgets.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disp" class="displayNone">
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; color: #858f9b">
+                Widgets available for your dashboard
+            </div>
+            <mat-divider style="width: 150px; margin: auto; margin-bottom: 20px"></mat-divider>
+        </div>
+
+        <!-- WIDGET NOT ACTIVATED -->
+        <div id="notActivated" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <i style="color: red; font-size: 45px; margin-top: 17px" class="fas fa-times-circle"></i>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        No Widget available
+                    </div>
+                    <div style="color: black;">
+                        Connect your account <a routerLink="/services" (click)="modal.close('Close click')">here</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- / WIDGET NOT ACTIVATED -->
+
+        <!-- WIDGET CHOOSE WEATHER -->
+
+        <div id="weather1" (click)="clickWeather1()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 100%" src="assets/WidgetWeather/01d.svg"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget current weather
+                    </div>
+                    <div style="color: black;">
+                        This is the current weather widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="weather2" (click)="clickWeather2()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 100%" src="assets/WidgetWeather/01d.svg"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget forecast weather
+                    </div>
+                    <div style="color: black;">
+                        This is the forecast weather widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disp2" class="displayNone">
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; color: #858f9b">
+                Settings of this widget
+            </div>
+            <mat-divider style="width: 150px; margin: auto; margin-bottom: 20px"></mat-divider>
+        </div>
+
+        <div id="settingWeatherCity1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">City</label>
+            <input type="email" [(ngModel)]="this.weather.city" class="form-control" placeholder="Enter name of the city">
+        </div>
+
+        <div id="settingWeatherMs1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.weather.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+        <button id="btn1" type="button" (click)="createWeatherCurrent()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <button id="btn2" type="button" (click)="createWeatherForcast()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <!-- / WIDGET CHOOSE WEATHER -->
+
+
+        <!-- WIDGET CHOOSE CRYPTO CURRENCY -->
+
+        <div id="crypto1" (click)="clickCrypto1()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1024px-Bitcoin.svg.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget cryptocurrency value
+                    </div>
+                    <div style="color: black;">
+                        This is the actual cryptocurrency value widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="crypto2" (click)="clickCrypto2()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/1024px-Bitcoin.svg.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget cryptocurrency worth
+                    </div>
+                    <div style="color: black;">
+                        This is the actual cryptocurrency worth widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disp4" class="displayNone">
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; color: #858f9b">
+                Settings of this widget
+            </div>
+            <mat-divider style="width: 150px; margin: auto; margin-bottom: 20px"></mat-divider>
+        </div>
+
+        <div id="settingCrypto1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Cryptocurrency</label>
+            <select [(ngModel)]="this.crypto.crypto" class="form-control">
+                <option selected value="BCH">Bitcoin Cash</option>
+                <option value="BNB">Binance Coin</option>
+                <option value="BSV">Bitcoin SV</option>
+                <option value="BTC">Bitcoin</option>
+                <option value="EOS">EOS</option>
+                <option value="ETH">Etherum</option>
+                <option value="LTC">Litecoin</option>
+                <option value="USDT">Tether</option>
+                <option value="XLM">Stellar</option>
+                <option value="XRP">Ripple</option>
+            </select>
+        </div>
+
+        <div id="settingCrypto2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Convert currency</label>
+            <select [(ngModel)]="this.crypto.currency" class="form-control">
+                <option selected value="EUR">Euro (€)</option>
+                <option value="USD">Dollar ($)</option>
+            </select>
+        </div>
+
+        <div id="settingCrypto3" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.crypto.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+        <button id="btn3" type="button" (click)="createCryptoValue()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <button id="btn4" type="button" (click)="createCryptoWorth()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <!-- / WIDGET CHOOSE CRYPTOCURRENCY -->
+
+        <!-- WIDGET CHOOSE INTRA -->
+        <div id="intra1" (click)="clickIntra1()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://gitlab.clementdugal.fr/uploads/-/system/project/avatar/91/epitech.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget intranet modules
+                    </div>
+                    <div style="color: black;">
+                        This is the Epitech's Intranet modules widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="intra2" (click)="clickIntra2()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://gitlab.clementdugal.fr/uploads/-/system/project/avatar/91/epitech.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget intranet user informations
+                    </div>
+                    <div style="color: black;">
+                        This is the Epitech's Intranet user informations widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disp5" class="displayNone">
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; color: #858f9b">
+                Settings of this widget
+            </div>
+            <mat-divider style="width: 150px; margin: auto; margin-bottom: 20px"></mat-divider>
+        </div>
+
+        <div id="settingIntra1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">View modules</label>
+            <select [(ngModel)]="this.intra.subscribed" class="form-control">
+                <option selected value="true">Subscribed</option>
+                <option value="false">Unsubscribed</option>
+            </select>
+        </div>
+
+        <div id="settingIntraTime1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.intra.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+
+        <div id="settingIntra2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">View informations</label>
+            <select [(ngModel)]="this.intra1.info_type" class="form-control">
+                <option selected value="GPA">GPA</option>
+                <option value="credits">Crédits</option>
+                <option value="image">Image</option>
+            </select>
+        </div>
+
+        <div id="settingIntraTime2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.intra1.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+        <button id="btn5" type="button" (click)="createIntraModules()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <button id="btn6" type="button" (click)="createIntraInfo()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <!-- / WIDGET CHOOSE INTRA -->
+
+        <!-- WIDGET CHOOSE YAMMER -->
+        <div id="yammer1" (click)="clickYammer1()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 70%; margin-top: 10px"
+                     src="https://is2-ssl.mzstatic.com/image/thumb/Purple128/v4/c6/80/63/c68063f3-aaa9-209c-8caf-31493db7a86b/contsched.okkimutv.png/1200x630bb.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget yammer group messages
+                    </div>
+                    <div style="color: black;">
+                        This is the yammer group widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="yammer2" (click)="clickYammer2()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 70%; margin-top: 10px"
+                     src="https://is2-ssl.mzstatic.com/image/thumb/Purple128/v4/c6/80/63/c68063f3-aaa9-209c-8caf-31493db7a86b/contsched.okkimutv.png/1200x630bb.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget yammer thread message
+                    </div>
+                    <div style="color: black;">
+                        This is the yammer thread widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disp6" class="displayNone">
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; color: #858f9b">
+                Settings of this widget
+            </div>
+            <mat-divider style="width: 150px; margin: auto; margin-bottom: 20px"></mat-divider>
+        </div>
+
+        <div id="settingYammer1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Group url</label>
+            <input type="text" [(ngModel)]="this.yammer.group_url" class="form-control" placeholder="Enter group url yammer">
+        </div>
+
+        <div id="settingYammerTime1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.yammer.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+
+        <div id="settingYammer2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Thread url</label>
+            <input type="text" [(ngModel)]="this.yammer1.thread_url" class="form-control" placeholder="Enter group url yammer">
+        </div>
+
+        <div id="settingYammerTime2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.yammer1.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+        <button id="btn7" type="button" (click)="createYammerMessage()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <button id="btn8" type="button" (click)="createYammerThread()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <!-- / WIDGET CHOOSE YAMMER -->
+
+        <!-- WIDGET CHOOSE GITHUB -->
+        <div id="github1" (click)="clickGithub1()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 70%; margin-top: 10px" src="https://www.pofilo.fr/img/SPOF-github/github1600.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget github repository commits
+                    </div>
+                    <div style="color: black;">
+                        This is the github commits widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="github2" (click)="clickGithub2()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 70%; margin-top: 10px" src="https://www.pofilo.fr/img/SPOF-github/github1600.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget github repository issues
+                    </div>
+                    <div style="color: black;">
+                        This is the github issues widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disp7" class="displayNone">
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; color: #858f9b">
+                Settings of this widget
+            </div>
+            <mat-divider style="width: 150px; margin: auto; margin-bottom: 20px"></mat-divider>
+        </div>
+
+        <div id="settingGithub1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Repository url</label>
+            <input type="text" [(ngModel)]="this.github.repo_url" class="form-control" placeholder="Enter repository url github">
+        </div>
+
+        <div id="settingGithubTime1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.github.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+
+        <div id="settingGithub2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Repository url</label>
+            <input type="text" [(ngModel)]="this.github.repo_url" class="form-control" placeholder="Enter repository url github">
+        </div>
+
+        <div id="settingGithubTime2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.github.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+        <button id="btn9" type="button" (click)="createGithubCommits()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <button id="btn10" type="button" (click)="createGithubIssues()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <!-- / WIDGET CHOOSE GITHUB -->
+
+        <!-- WIDGET CHOOSE TRELLO-->
+        <div id="trello1" (click)="clickTrello1()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://www.stickpng.com/assets/images/58482beecef1014c0b5e4a36.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget trello display lists in a board
+                    </div>
+                    <div style="color: black;">
+                        This is the Trello board widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="trello2" (click)="clickTrello2()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px"
+                     src="https://www.stickpng.com/assets/images/58482beecef1014c0b5e4a36.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget trello members tasks
+                    </div>
+                    <div style="color: black;">
+                        This is the Trello member tasks widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disp8" class="displayNone">
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; color: #858f9b">
+                Settings of this widget
+            </div>
+            <mat-divider style="width: 150px; margin: auto; margin-bottom: 20px"></mat-divider>
+        </div>
+
+        <div id="settingTrello1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Choose your kaban board</label>
+            <select [(ngModel)]="this.trello.board_id" class="form-control">
+                <option *ngFor="let each of this.getBoard" value="{{each.id}}">{{each.name}}</option>
+            </select>
+        </div>
+
+        <div id="settingTrelloTime1" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.trello.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+
+        <div id="settingTrello2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Choose your kaban board</label>
+            <select [(ngModel)]="this.trello1.board_id" (change)="getUserBoard()" class="form-control">
+                <option *ngFor="let each of this.getBoard" value="{{each.id}}">{{each.name}}</option>
+            </select>
+        </div>
+
+        <div id="settingTrelloUser2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Choose user on this board</label>
+            <select id="select1" disabled [(ngModel)]="this.trello1.member_id" class="form-control">
+                <option *ngFor="let each of this.userInBoard" value="{{each.id}}">{{each.name}}</option>
+            </select>
+        </div>
+
+        <div id="settingTrelloTime2" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.trello1.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+        <button id="btn11" type="button" (click)="createTrelloListTable()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <button id="btn12" type="button" (click)="createTrelloMemberTasks()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <!-- / WIDGET CHOOSE GITHUB -->
+
+        <!-- WIDGET CHOOSE AIR -->
+        <div id="air1" (click)="clickAir1()" class="grid-container-widget shadow chooseWidget displayNone">
+            <div class="grid-item" style="text-align: center">
+                <img style="width: 60%; margin-top: 15px" src="https://images.vexels.com/media/users/3/157970/isolated/preview/c156b4270aea292b9b335dd463ea17eb-earth-planet-icon-earth-icon-by-vexels.png"/>
+            </div>
+            <div class="grid-item" style="text-align: left; padding: 10px; word-wrap: break-word ">
+                <div>
+                    <div style="color: #4b4b4b; font-weight: 400; font-size: 20px; margin-top: 3px">
+                        Widget city air quality
+                    </div>
+                    <div style="color: black;">
+                        This is the air quality widget.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="disp9" class="displayNone">
+            <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; color: #858f9b">
+                Settings of this widget
+            </div>
+            <mat-divider style="width: 150px; margin: auto; margin-bottom: 20px"></mat-divider>
+        </div>
+
+        <div id="settingAirCity" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">City</label>
+            <input type="email" [(ngModel)]="this.air.city" class="form-control" placeholder="Enter name of the city">
+        </div>
+
+        <div id="settingAirMs" class="chooseWidgetSettings form-group displayNone shadow">
+            <label style="color: #4b4b4b">Refresh (In minutes)</label>
+            <input type="number" [(ngModel)]="this.air.time" class="form-control" placeholder="Enter time of refresh">
+        </div>
+
+        <button id="btn13" type="button" (click)="createAir()" style="background: #FF4B2B; color: white; width: 100%" class="btn displayNone">Create this widget</button>
+
+        <!-- / WIDGET CHOOSE AIR -->
+
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsWeather1 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">City</label>
+                <input [(ngModel)]="this.weatherS.city" type="text" class="syncBar">
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input [(ngModel)]="this.weatherS.time" type="text" class="syncBar">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateWeather1()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsWeather2 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">City </label>
+                <input [(ngModel)]="this.weatherS.city" type="text" class="syncBar">
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input [(ngModel)]="this.weatherS.time" type="text" class="syncBar">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateWeather2()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsCrypto1 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Cryptocurrency</label>
+                <select [(ngModel)]="this.cryptoS.crypto_currency" class="form-control">
+                    <option selected value="BCH">Bitcoin Cash</option>
+                    <option value="BNB">Binance Coin</option>
+                    <option value="BSV">Bitcoin SV</option>
+                    <option value="BTC">Bitcoin</option>
+                    <option value="EOS">EOS</option>
+                    <option value="ETH">Etherum</option>
+                    <option value="LTC">Litecoin</option>
+                    <option value="USDT">Tether</option>
+                    <option value="XLM">Stellar</option>
+                    <option value="XRP">Ripple</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Convert currency</label>
+                <select [(ngModel)]="this.cryptoS.currency" class="form-control">
+                    <option selected value="EUR">Euro (€)</option>
+                    <option value="USD">Dollar ($)</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input [(ngModel)]="this.cryptoS.time" type="text" class="syncBar">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateCrypto1()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsCrypto2 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Cryptocurrency</label>
+                <select [(ngModel)]="this.cryptoS.crypto_currency" class="form-control">
+                    <option selected value="BCH">Bitcoin Cash</option>
+                    <option value="BNB">Binance Coin</option>
+                    <option value="BSV">Bitcoin SV</option>
+                    <option value="BTC">Bitcoin</option>
+                    <option value="EOS">EOS</option>
+                    <option value="ETH">Etherum</option>
+                    <option value="LTC">Litecoin</option>
+                    <option value="USDT">Tether</option>
+                    <option value="XLM">Stellar</option>
+                    <option value="XRP">Ripple</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Convert currency</label>
+                <select [(ngModel)]="this.cryptoS.currency" class="form-control">
+                    <option selected value="EUR">Euro (€)</option>
+                    <option value="USD">Dollar ($)</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input [(ngModel)]="this.cryptoS.time" type="text" class="syncBar">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateCrypto2()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsIntra1 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">View modules</label>
+                <select [(ngModel)]="this.intra1S.subscribed" class="form-control">
+                    <option selected value="true">Subscribed</option>
+                    <option value="false">Unsubscribed</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input [(ngModel)]="this.intra1S.time" type="text" class="syncBar">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateIntra1()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalSettingsIntra2 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">View informations</label>
+                <select [(ngModel)]="this.intra2S.info_type" class="form-control">
+                    <option selected value="GPA">GPA</option>
+                    <option value="credits">Crédits</option>
+                    <option value="image">Image</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input [(ngModel)]="this.intra2S.time" type="text" class="syncBar">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateIntra2()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsYammer1 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Group url</label>
+                <input type="text" [(ngModel)]="this.yammer1S.group_url" class="form-control">
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input type="number" [(ngModel)]="this.yammer1S.time" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateYammer1()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsYammer2 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Thread url</label>
+                <input type="text" [(ngModel)]="this.yammer2S.thread_url" class="form-control">
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input type="number" [(ngModel)]="this.yammer2S.time" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateYammer2()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsGithub1 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Repository url</label>
+                <input type="text" [(ngModel)]="this.githubS.repo_url" class="form-control" placeholder="Enter repository url github">
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input type="number" [(ngModel)]="this.githubS.time" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateGithub1()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsGithub2 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Repository url</label>
+                <input type="text" [(ngModel)]="this.github2S.repo_url" class="form-control" placeholder="Enter repository url github">
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input type="number" [(ngModel)]="this.github2S.time" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateGithub2()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsTrello1 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Repository url</label>
+                <select [(ngModel)]="this.trelloS.board_id" class="form-control">
+                    <option *ngFor="let each of this.getBoard" value="{{each.id}}">{{each.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input type="number" [(ngModel)]="this.trelloS.time" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateTrello()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsTrello2 let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Choose your kaban board</label>
+                <select [(ngModel)]="this.trello1S.board_id" (change)="getUserBoardSettings()" class="form-control">
+                    <option *ngFor="let each of this.getBoard" value="{{each.id}}">{{each.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Choose user on this board</label>
+                <select [(ngModel)]="this.trello1S.member_id" class="form-control">
+                    <option *ngFor="let each of this.userInBoard" value="{{each.id}}">{{each.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input type="number" [(ngModel)]="this.trello1S.time" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateTrello1()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- SETTINGS WIDGET -->
+<ng-template #modalSettingsAir let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Widget settings</h4>
+        <button type="button" class="close" (click)="modal.close('Close click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">City</label>
+                <input [(ngModel)]="this.airS.city" type="text" class="syncBar">
+            </div>
+        </div>
+        <div style="margin-top: 20px" class="row">
+            <div class="offset-2 col-md-8">
+                <label style="color: #4b4b4b">Refresh (In minutes)</label>
+                <input [(ngModel)]="this.airS.time" type="text" class="syncBar">
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-md-8">
+                <button (click)="updateAirQuality()" style="background-color: #FF4B2B; width: 100%; color: white; margin-top: 40px" class="btn">Save</button>
+            </div>
+        </div>
+    </div>
+</ng-template>

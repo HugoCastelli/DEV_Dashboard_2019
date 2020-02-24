@@ -1,0 +1,121 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport
+                 [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+                 [mode]="(isHandset$ | async) ? 'over' : 'side'"
+                 [opened]="(isHandset$ | async) === false">
+        <mat-toolbar style="height: 290px; padding-top: 20px">
+            <div style="width: 100%; text-align: center;">
+                <img src="assets/img/avatar.png" alt style="height: 100px; width: 100px; margin: auto;"
+                     class="rounded-circle shadow-lg">
+
+                <p class="text-center" style="color: #858f9b; margin-bottom: 0; margin-top: 20px">{{this.data.name}}</p>
+
+                <span class="badge badge-pill"
+                      style="color: white;background: #FF4B2B;font-weight: 500;padding-top: 5px;padding-bottom: 5px;padding-left: 20px;margin-top: 10px;padding-right: 20px;">{{this.data.role}}</span>
+
+            </div>
+        </mat-toolbar>
+        <mat-divider style="width: 150px; margin: auto;"></mat-divider>
+        <mat-nav-list>
+            <a style="height: 100px" routerLink="/dashboard" mat-list-item>
+                <div style="width: 100%; text-align: center; color: #b1bac3">
+                    <i style="font-size: 20px" class="fas fa-home"></i>
+                    <p style="margin-bottom: 0">Dashboard</p>
+                </div>
+            </a>
+            <a style="height: 100px" routerLink="/services" mat-list-item>
+                <div style="width: 100%; text-align: center;">
+                    <i style="color: #b1bac3; font-size: 20px" class="fas fa-cog"></i>
+                    <p style="color: #b1bac3; margin-bottom: 0">Services</p>
+                </div>
+            </a>
+            <a *ngIf="this.data.role == 'King Admin'" routerLink="/member" style="height: 100px" mat-list-item>
+                <div style="width: 100%; text-align: center;">
+                    <i style="color: #FF4B2B; font-size: 20px" class="fas fa-users-cog"></i>
+                    <p style="color: #FF4B2B; margin-bottom: 0">Members</p>
+                </div>
+            </a>
+
+            <a style="height: 100px" (click)="logout()" mat-list-item>
+                <div style="width: 100%; text-align: center;">
+                    <i style="color: #b1bac3; font-size: 20px" class="fas fa-sign-out-alt"></i>
+                    <p style="color: #b1bac3; margin-bottom: 0">Log Out</p>
+                </div>
+            </a>
+        </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <mat-toolbar style="background: white; height: 120px">
+            <button
+                type="button"
+                aria-label="Toggle sidenav"
+                mat-icon-button
+                (click)="drawer.toggle()"
+                *ngIf="isHandset$ | async">
+                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+            <div>
+                <div style="width: 100%">
+                    <span style="color: #FF4B2B; font-size: 30px">Members</span>
+                </div>
+                <div style="width: 100%">
+                    <span style="color: #b1bac3">{{myDate | amDateFormat:'LL'}}</span>
+                </div>
+            </div>
+        </mat-toolbar>
+
+        <div class="container-fluid">
+            <table class="gfg" style="width: 100%; margin-top: 30px">
+                <thead>
+                <tr>
+                    <th colspan="1">Basic info</th>
+                    <th colspan="1">Role</th>
+                    <th colspan="1">Services activated</th>
+                    <th colspan="1">Widgets activated</th>
+                    <th colspan="1"></th>
+                </tr>
+                </thead>
+                <tbody *ngIf="this.users != undefined">
+                <tr *ngFor="let each of this.users" style="height: 70px; border-radius: 20px" class="shadow-sm">
+                    <td style="display: inline-flex">
+                        <div>
+                            <img style="width: 40px; border-radius: 30px; margin-top: 15px; margin-left: 10px"
+                                 src="assets/img/avatar.png" alt/>
+                        </div>
+                        <div style="margin-top: 8px; margin-left: 14px;">
+                            <div>
+                                {{each.name}}
+                            </div>
+                            <div style="color: #b4b4b4">
+                                {{each.email == 'null' ? 'Indisponible' : each.email}}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge badge-pill"
+                              style="color: white;background: #FF4B2B;font-weight: 500;padding-top: 5px;padding-bottom: 5px;padding-left: 20px;padding-right: 20px;">{{each.role}}</span>
+                    </td>
+                    <td>
+                        {{this.countS(each)}}
+                    </td>
+                    <td>
+                        {{this.countW(each)}}
+                    </td>
+                    <td>
+                        <div *ngIf="each.role != 'King Admin'" class="cui-example cui-example-inline-spacing">
+                            <div ngbDropdown class="d-inline-flex">
+                                <button class="btn btn-default" ngbDropdownToggle>Action</button>
+                                <div ngbDropdownMenu>
+                                    <a class="dropdown-item" (click)="deleteUsers(each)">Delete this user</a>
+                                    <a class="dropdown-item" (click)="makeAdmin(each)">Change user role</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </mat-sidenav-content>
+</mat-sidenav-container>

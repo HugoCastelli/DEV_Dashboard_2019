@@ -1,0 +1,22 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple" name="{{this.widget.id}}">
+    <p style="font-size: 15px; color: white; margin-top: 50px">Loading Air Quality widget</p>
+</ngx-spinner>
+<agm-map [streetViewControl]="false" o  *ngIf="this.newWidget != undefined" [latitude]="this.newWidget.city_geo[0]" [longitude]="this.newWidget.city_geo[1]">
+    <agm-marker [latitude]="this.newWidget.city_geo[0]" [longitude]="this.newWidget.city_geo[1]">
+        <agm-info-window [disableAutoPan]="false" [isOpen]="true">
+            <div class="grid-container-agm" style="width: 100%; height: 100%;">
+                <div class="grid-item" style="font-size: 60px">
+                    {{this.newWidget.quality}}
+                </div>
+                <div class="grid-item" style="margin-left: 20px;">
+                    <div style="font-size: 20px">
+                        {{this.newWidget.city_name}}
+                    </div>
+                    <div>
+                        <span class="badge badge-pill" [ngStyle]="{'background-color': this.newWidget.color}" style="color: white;font-weight: 500;padding-top: 5px;padding-bottom: 5px;padding-left: 20px;margin-top: 10px;padding-right: 20px;">{{this.newWidget.health}}</span>
+                    </div>
+                </div>
+            </div>
+        </agm-info-window>
+    </agm-marker>
+</agm-map>

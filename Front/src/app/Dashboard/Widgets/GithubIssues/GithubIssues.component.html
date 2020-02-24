@@ -1,0 +1,36 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="#fff" type="ball-scale-multiple" name="{{this.widget.id}}">
+    <p style="font-size: 20px; color: white">Loading Github widget</p>
+</ngx-spinner>
+<div *ngIf="this.newWidget != undefined" style="width: 100%; height: 100%; background: #eeeeee;">
+    <div style="background: black;padding: 10px;color: white;">
+        {{this.newWidget.name}}
+    </div>
+    <div style="height: 100%; padding-bottom: 44px" class="cui-example scrollbar style-4">
+        <ngb-accordion [closeOthers]="true" activeIds="accordion2-static-1" class="ngb-accordion-with-icon">
+            <ngb-panel *ngFor="let each of newWidget.issues">
+                <ng-template ngbPanelTitle>
+                    <span class="text-dark" style="float: left;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 460px; text-align: left">{{each.title}}</span>
+                    <div class="collapse-icon" style="float: right; margin-top: 22px"></div>
+                    <br>
+                    <div style="text-align: left; margin-top: 5px;"><span [ngClass]="{'greenIssues': each.state == 'Open', 'redIssues': each.state == 'Closed'}" style="font-weight: unset; text-decoration: unset"><i class="fas fa-info-circle"></i> {{each.state}}</span><span class="text-dark" style="color: black; font-weight: unset"> - {{each.date}}</span>
+                    </div>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                    <div style="width: 100%">
+                        <a href="{{each.author_url}}" target="_blank"><img style="width: 40px; border-radius: 30px; margin-top: 10px; margin-left: 10px"
+                            src="{{each.author_img}}" alt/>
+                            <abbr
+                                style="vertical-align: -webkit-baseline-middle; margin-left: 10px; font-size: 15px; color: #858f9b;">{{each.author}}</abbr></a>
+                        <a href="{{each.url}}" target="_blank"><span class="badge badge-pill"
+                                                                            style="text-align: right; float: right; color: white; background: black; font-weight: 500; padding-top: 5px; padding-bottom: 5px; padding-left: 20px; margin-right: 17px; margin-top: 18px; padding-right: 20px; cursor:pointer;">See on Github</span></a>
+                    </div>
+                    <div [innerHTML]="each.body" style="padding: 15px">
+                    </div>
+                    <div style="padding: 15px; padding-top: 0">
+                        <i style="margin-right: 5px" class="far fa-comment-alt"></i>{{each.comments}}
+                    </div>
+                </ng-template>
+            </ngb-panel>
+        </ngb-accordion>
+    </div>
+</div>

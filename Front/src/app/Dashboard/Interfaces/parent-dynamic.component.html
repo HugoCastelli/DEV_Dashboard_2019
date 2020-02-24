@@ -1,0 +1,26 @@
+<app-current-weather [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'current_weather'">
+</app-current-weather>
+<app-forecast-weather [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'forecast_weather'">
+</app-forecast-weather>
+<app-crypto-value [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'crypto_actual_value'">
+</app-crypto-value>
+<app-crypto-worth [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'crypto_actual_worth'">
+</app-crypto-worth>
+<app-intra-modules [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'intra_modules'">
+</app-intra-modules>
+<app-intra-info [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'intra_infos'">
+</app-intra-info>
+<app-yammer-group-messages [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'group_messages'">
+</app-yammer-group-messages>
+<app-yammer-thread [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'thread_messages'">
+</app-yammer-thread>
+<app-github-commits [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'repo_commits'">
+</app-github-commits>
+<app-github-issues [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'repo_issues'">
+</app-github-issues>
+<app-trello-list-table [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'trello_board'">
+</app-trello-list-table>
+<app-trello-member-tasks [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'trello_member_tasks'">
+</app-trello-member-tasks>
+<app-air-quality [widget]="widget" [resizeEvent]="resizeEvent" *ngIf="widget.type === 'air_quality'">
+</app-air-quality>
